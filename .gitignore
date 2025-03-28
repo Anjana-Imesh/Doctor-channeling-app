@@ -1,0 +1,6 @@
+.dart_tool/
+build/
+android/app/google-services.json
+firebase.json
+lib/firebase_options.dart
+macos/Runner/GoogleService-Info.plist
