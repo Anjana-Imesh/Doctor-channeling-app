@@ -1,63 +1,4 @@
-/*
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:frontend/firebase_options.dart';
-import 'package:frontend/home_page.dart';
-import 'package:frontend/signup_page.dart';
-import 'package:frontend/login_page.dart';
-import 'package:frontend/patient_dashboard_page.dart';
 
-
-void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(const MyApp());
-}
-
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Task Management',
-      theme: ThemeData(
-        fontFamily: 'Cera Pro',
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
-            minimumSize: const Size(double.infinity, 60),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          contentPadding: const EdgeInsets.all(27),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.grey.shade300,
-              width: 3,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              width: 3,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-      home: const LoginPage(), // Always start from LoginPage
-    );
-  }
-}
-*/
 
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -80,35 +21,48 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Task Management',
+      title: 'Doctor Channeling',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Cera Pro',
+        primaryColor: const Color(0xFF2196F3),
+        scaffoldBackgroundColor: const Color(0xFFF9F9F9),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF2196F3),
+          foregroundColor: Colors.white,
+          elevation: 0,
+          titleTextStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.black,
-            minimumSize: const Size(double.infinity, 60),
+            backgroundColor: const Color(0xFF2196F3),
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
-          contentPadding: const EdgeInsets.all(27),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.grey.shade300,
-              width: 3,
-            ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xFFBDBDBD)),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(width: 3),
             borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xFF2196F3), width: 2),
           ),
         ),
+        textTheme: const TextTheme(
+          headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          bodyMedium: TextStyle(fontSize: 16),
+          labelLarge: TextStyle(fontSize: 14, color: Colors.black54),
+        ),
       ),
-      home: const SplashScreen(), // Show SplashScreen first
+      home: const SplashScreen(),
     );
   }
 }
@@ -137,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Image.asset('assets/splash_logo.png', width: 200), // Ensure you have this image
+        child: Image.asset('assets/splash_logo.png', width: 200),
       ),
     );
   }

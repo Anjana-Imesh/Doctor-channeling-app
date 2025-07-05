@@ -1,128 +1,76 @@
-/*
-import 'package:flutter/material.dart';
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DoctorDashboard extends StatelessWidget {
   const DoctorDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Doctor Dashboard')),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('appointments')
-            .where('doctorId', isEqualTo: userId) // Filter appointments for logged-in doctor
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) {
-              var appointment = snapshot.data!.docs[index];
-              return Card(
-                margin: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text('Patient: ${appointment['userId']}'),
-                  subtitle: Text('Date: ${appointment['timestamp'].toDate()}'),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-*/
-/*
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-class DoctorDashboard extends StatelessWidget {
-  const DoctorDashboard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final userId = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Doctor Dashboard'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back), // Back button icon
-          onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
-          },
-        ),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('appointments')
-            .where('doctorId', isEqualTo: userId) // Filter appointments for logged-in doctor
+            .where('doctorId', isEqualTo: userId)
+            .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) {
-              var appointment = snapshot.data!.docs[index];
-              return Card(
-                margin: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text('Patient: ${appointment['userId']}'),
-                  subtitle: Text('Date: ${appointment['timestamp'].toDate()}'),
-                ),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
-}
-*/
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-
-class DoctorDashboard extends StatelessWidget {
-  const DoctorDashboard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-
-    return Scaffold(
-      appBar: AppBar(title: const Text('Doctor Dashboard')),
-      body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('appointments')
-            .where('doctorId', isEqualTo: userId)  // Filter appointments for logged-in doctor
-            .orderBy('appointmentDate', descending: true) 
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text("No appointments found."));
+          }
+
+          final appointments = snapshot.data!.docs;
+
           return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
+            itemCount: appointments.length,
             itemBuilder: (context, index) {
-              var appointment = snapshot.data!.docs[index];
+              final appointment = appointments[index];
+              final data = appointment.data() as Map<String, dynamic>;
+
+              final DateTime date = data['appointmentDate'].toDate();
+              final String formattedDate = DateFormat('dd MMM yyyy').format(date);
 
               return Card(
-                margin: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text('Patient Name: ${appointment['userName']}'), // Display Patient Email
-                  subtitle: Text('Date: ${appointment['appointmentDate'].toDate()}'),
-                  trailing: const Icon(Icons.email),
+                margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                elevation: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.person, size: 28),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Patient: ${data['userName']}',
+                            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text('Date: $formattedDate', style: textTheme.bodyMedium),
+                      Text('Time: ${data['time']}', style: textTheme.bodyMedium),
+                      Text('Queue Number: ${data['queueNumber']}', style: textTheme.bodyMedium),
+                      Text('Location: ${data['location']}', style: textTheme.bodyMedium),
+                      Text('Fee: Rs. ${data['fee']}', style: textTheme.bodyMedium),
+                    ],
+                  ),
                 ),
               );
             },
